@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Area;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class areaController extends Controller
 {
@@ -43,7 +44,7 @@ class areaController extends Controller
                 'area' => $area,
             ], 201);
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             $data = [
                 'message' => 'Error al validar los datos',
                 'errors' => $e->errors(),
