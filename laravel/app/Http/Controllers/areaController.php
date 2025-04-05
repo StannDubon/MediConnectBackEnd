@@ -26,15 +26,29 @@ class areaController extends Controller
     }
 
     // Bendito sea el que arregle esto
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'nombre' => 'required',
         ]);
 
-        $area = Area::create(['nombre' => $validated['nombre']]);
+        $area = Areas::create([
+            'nombre' => $validated['nombre'],
+        ]);
 
-        return response()->json(['area' => $area], 201);
+        if (!$area) {
+            $data = [
+                'message' => 'Error al crear el área',
+                'status' => 500,
+            ];
+            return response()->json($data, 500); // Cambia el código de estado a 500 para errores internos
+        }
+
+        $data = [
+            'area' => $area,
+            'status' => 201,
+        ];
+        return response()->json($data, 201);
     }
 
 
