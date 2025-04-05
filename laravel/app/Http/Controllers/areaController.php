@@ -43,7 +43,7 @@ class areaController extends Controller
                 'message' => 'Error al crear el área',
                 'status' => 500,
             ];
-            return response()->json($data, 500); // Cambia el código de estado a 500 para errores internos
+            return response()->json($data, 500);
         }
 
         $data = [
