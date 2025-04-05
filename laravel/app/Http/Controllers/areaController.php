@@ -25,6 +25,8 @@ class areaController extends Controller
         return response()->json($data, 200);
     }
 
+
+
     // Bendito sea el que arregle esto
     public function store(Request $request): JsonResponse
     {
@@ -32,7 +34,7 @@ class areaController extends Controller
             'nombre' => 'required',
         ]);
 
-        $area = Areas::create([
+        $area = Area::create([
             'nombre' => $validated['nombre'],
         ]);
 
