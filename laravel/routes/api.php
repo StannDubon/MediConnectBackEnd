@@ -36,4 +36,7 @@ Route::post('/login', function(Request $request){
 
 /* ------ AREAS ------ */
 Route::get('/areas', [areaController::class, 'index']);
+Route::get('/areas/{id}', [areaController::class, 'show']);
+Route::delete('/areas/{id}', [areaController::class, 'destroy']);
 Route::post('/areas', [areaController::class, 'store']);
+Route::put('/areas/{id}', [areaController::class, 'update']);
