@@ -36,7 +36,4 @@ Route::post('/login', function(Request $request){
 
 /* ------ AREAS ------ */
 Route::get('/areas', [areaController::class, 'index']);
-
-// FUNCIONA (?) PERO DA ERROR
-//HAY QUE INVESTIGAR POR QUE PASA EN LA VERSION 1.12 DE LARAVEL
 Route::post('/areas', [areaController::class, 'store']);
