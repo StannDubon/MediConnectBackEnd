@@ -28,31 +28,31 @@ class areaController extends Controller
 
 
 
-    // Bendito sea el que arregle esto
     public function store(Request $request): JsonResponse
     {
-        $validated = $request->validate([
-            'nombre' => 'required',
-        ]);
 
-        $area = Area::create([
-            'nombre' => $validated['nombre'],
-        ]);
+        try {
+            $validated = $request->validate([
+                'nombre' => 'required',
+            ]);
 
-        if (!$area) {
+            $area = Area::create($validated);
+
+            return response()->json([
+                'message' => 'Área creada exitosamente',
+                'area' => $area,
+            ], 201);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
             $data = [
-                'message' => 'Error al crear el área',
-                'status' => 500,
+                'message' => 'Error al validar los datos',
+                'errors' => $e->errors(),
+                'status' => 422,
             ];
-            return response()->json($data, 500);
+            return response()->json($data, 422);
         }
-
-        $data = [
-            'area' => $area,
-            'status' => 201,
-        ];
-        return response()->json($data, 201);
     }
+
 
 
 }
