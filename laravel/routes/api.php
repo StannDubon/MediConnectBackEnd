@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Hash;
 
 use App\Http\Controllers\areaController;
+use App\Http\Controllers\doctorController;
 
 /*
     NO INTENTEN HACER MAS ARCHIVOS ROUTE
@@ -40,3 +41,11 @@ Route::get('/areas/{id}', [areaController::class, 'show']);
 Route::delete('/areas/{id}', [areaController::class, 'destroy']);
 Route::post('/areas', [areaController::class, 'store']);
 Route::put('/areas/{id}', [areaController::class, 'update']);
+
+
+/* ------ DOCTORES ------ */
+Route::get('/doctores', [doctorController::class, 'index']);
+Route::get('/doctores/{id}', [doctorController::class, 'show']);
+Route::delete('/doctores/{id}', [doctorController::class, 'destroy']);
+Route::post('/doctores', [doctorController::class, 'store']);
+Route::put('/doctores/{id}', [doctorController::class, 'update']);
