@@ -13,6 +13,7 @@ class Doctor extends Model
         'apellido',
         'email',
         'password',
-        'clinica_diaria'
+        'clinica_diaria',
+        'imagen'
     ];
 }

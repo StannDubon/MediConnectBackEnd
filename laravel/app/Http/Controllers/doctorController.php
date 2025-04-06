@@ -8,13 +8,15 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 
 class doctorController extends Controller
 {
     public function index(){
-        $areas = Doctor::all();
-        if($areas->isEmpty()){
+        $doctores = Doctor::all();
+        if($doctores->isEmpty()){
             $data=[
                 'message' => 'No se encontraron doctores existentes',
                 'status' => 200,
@@ -23,7 +25,7 @@ class doctorController extends Controller
         }
 
         $data=[
-            'doctores' => $areas,
+            'doctores' => $doctores,
             'status' => 200,
         ];
         return response()->json($data, 200);
@@ -53,12 +55,28 @@ class doctorController extends Controller
                 'apellido' => 'required|max:255',
                 'email' => 'required|email|unique:doctores,email',
                 'password' => 'required',
-                'clinica_diaria' => 'required|integer'
+                'clinica_diaria' => 'required|integer',
+                'imagen' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
             ]);
 
+            $image = $request->file('imagen');
+            $filename = Str::random(20) . '.' . $image->getClientOriginalExtension(); // Generar nombre único
+            $path = $image->storeAs('images', $filename, 'public'); // Guardar la imagen en storage/app/public/images
+            $url = Storage::url($path);
+
             $validated['password'] = Hash::make($validated['password']);
+            $validated['imagen'] = $filename;
             $doctor = Doctor::create($validated);
-            unset($doctor->password);
+
+            // No incluyas password ni imagen en la respuesta
+            $doctorData = $doctor->toArray();
+            unset($doctorData['password']);
+
+            return response()->json([
+                'message' => 'Doctor creado exitosamente',
+                'doctor' => $doctorData,
+                'status' => 201,
+            ], 201);
 
             return response()->json([
                 'message' => 'Área creada exitosamente',

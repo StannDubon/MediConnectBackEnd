@@ -41,6 +41,7 @@ Route::get('/areas/{id}', [areaController::class, 'show']);
 Route::delete('/areas/{id}', [areaController::class, 'destroy']);
 Route::post('/areas', [areaController::class, 'store']);
 Route::put('/areas/{id}', [areaController::class, 'update']);
+Route::patch('/areas/{id}', [areaController::class, 'updatePartial']);
 
 
 /* ------ DOCTORES ------ */

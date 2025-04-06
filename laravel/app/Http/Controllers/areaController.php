@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Area;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class areaController extends Controller
@@ -99,6 +100,49 @@ class areaController extends Controller
             ]);
 
             $area->nombre = $request->nombre;
+            $area->save();
+
+            return response()->json([
+                'message' => 'Área actualizada exitosamente',
+                'area' => $area,
+                'status' => 200,
+            ], 200);
+
+        } catch (ValidationException $e) {
+            $data = [
+                'message' => 'Error al validar los datos',
+                'errors' => $e->errors(),
+                'status' => 422,
+            ];
+            return response()->json($data, 422);
+        }
+    }
+
+    public function updatePartial(Request $request, $id){
+        $area = Area::find($id);
+        if(!$area){
+            return response()->json([
+                'message' => 'Área no encontrada',
+                'status' => 404,
+            ], 404);
+        }
+
+        if ($request->all() === []) {
+            return response()->json([
+                'message' => 'Por favor digite el campo que desea actualizar',
+                'area' => $area,
+                'status' => 200,
+            ], 200);
+        }
+
+        try {
+            $validated = $request->validate([
+                Rule::unique('areas', 'nombre')->ignore($area->id),
+            ]);
+
+            if($request->has('nombre')){
+                $area->nombre = $request->nombre;}
+
             $area->save();
 
             return response()->json([
