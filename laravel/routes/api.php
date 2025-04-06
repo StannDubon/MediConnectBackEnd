@@ -49,4 +49,5 @@ Route::get('/doctores', [doctorController::class, 'index']);
 Route::get('/doctores/{id}', [doctorController::class, 'show']);
 Route::delete('/doctores/{id}', [doctorController::class, 'destroy']);
 Route::post('/doctores', [doctorController::class, 'store']);
-Route::put('/doctores/{id}', [doctorController::class, 'update']);
+Route::post('/doctores/update/{id}', [doctorController::class, 'update']);
+Route::post('/doctores/patch/{id}', [doctorController::class, 'updatePartial']);

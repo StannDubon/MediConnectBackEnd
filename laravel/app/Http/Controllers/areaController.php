@@ -96,7 +96,7 @@ class areaController extends Controller
 
         try {
             $validated = $request->validate([
-                'nombre' => 'required|min:2|max:255|unique:areas,nombre',
+                'nombre' => 'required|min:2|max:255|unique:areas,nombre,' . $area->id,
             ]);
 
             $area->nombre = $request->nombre;
@@ -137,7 +137,7 @@ class areaController extends Controller
 
         try {
             $validated = $request->validate([
-                Rule::unique('areas', 'nombre')->ignore($area->id),
+                'nombre' => 'required|min:2|max:255|unique:areas,nombre,' . $area->id,
             ]);
 
             if($request->has('nombre')){
