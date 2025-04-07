@@ -3,16 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Sanctum\HasApiTokens;
 
 class Doctor extends Model
 {
+    use HasApiTokens;
     protected $table ='doctores';
 
     protected $fillable = [
         'nombre',
         'apellido',
-        'email',
-        'password',
         'clinica_diaria',
         'imagen'
     ];

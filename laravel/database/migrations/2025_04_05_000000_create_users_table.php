@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->enum('type', ['admin', 'doctor', 'patient'])->default('patient');
+            $table->foreignId('doctor_id')->nullable()->constrained('doctores');
+            $table->foreignId('paciente_id')->nullable()->constrained('pacientes');
             $table->rememberToken();
             $table->timestamps();
         });

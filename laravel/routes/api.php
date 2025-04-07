@@ -1,42 +1,26 @@
 <?php
 
-use App\Models\User;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 use App\Http\Controllers\areaController;
 use App\Http\Controllers\doctorController;
+use App\Http\Controllers\AuthController;
 
-/*
-    NO INTENTEN HACER MAS ARCHIVOS ROUTE
-    LA VALIDACION CSRF HACE CUCHE
-*/
+Route::post('/signup/admin', [AuthController::class, 'signupAdmin']);
+Route::post('/signup/doctor', [AuthController::class, 'signupDoctor']);
+Route::post('/signup/patient', [AuthController::class, 'signupPatient']);
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-
-Route::post('/login', function(Request $request){
-    $user = User::where('email', $request->input('email'))->first();
-
-    if(!$user || !Hash::check($request->password, $user->password)){
-        return response()->json([
-            'message' => 'Credenciales incorrectas',
-        ], 401);
-    }
-
-    return response()->json([
-        'user' => [
-            'name' => $user->name,
-            'email' => $user->email,
-        ],
-        'token' => $user->createToken('api')->plainTextToken,
-    ]);
-});
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+Route::get('/user', [AuthController::class, 'user'])->middleware('auth:sanctum');
 
 /* ------ AREAS ------ */
-Route::get('/areas', [areaController::class, 'index']);
+Route::get('/areas', [areaController::class, 'index'])->middleware(['auth:sanctum', 'abilities:server-admin']);
 Route::get('/areas/{id}', [areaController::class, 'show']);
 Route::delete('/areas/{id}', [areaController::class, 'destroy']);
 Route::post('/areas', [areaController::class, 'store']);
