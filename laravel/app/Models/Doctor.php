@@ -16,4 +16,9 @@ class Doctor extends Model
         'clinica_diaria',
         'imagen'
     ];
+
+    public function user()
+    {
+        return $this->hasOne(User::class, 'doctor_id');
+    }
 }
