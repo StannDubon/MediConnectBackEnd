@@ -39,7 +39,7 @@ class AuthController extends Controller
             'apellido' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|string|confirmed|min:6',
-            'clinica_diaria' => 'nullable|string',
+            'clinica_diaria' => 'required|nullable|integer',
             'imagen' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
 
@@ -63,6 +63,7 @@ class AuthController extends Controller
         ]);
 
         $user['imagen'] = $filename;
+        unset($user['id']);
 
         return response()->json(['message' => 'Doctor registrado', 'user' => $user], 201);
     }
@@ -99,50 +100,77 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         try {
-            // Validar la solicitud
             $validator = Validator::make($request->all(), [
                 'email'    => 'required|email',
                 'password' => 'required',
             ]);
 
-            // Dependiendo del tipo, buscar al usuario correspondiente
-            $user = null;
-            if ($request->type == 'doctor') {
-                $user = Doctor::where('email', $request->email)->first();
-            } elseif ($request->type == 'patient') {
-                $user = Paciente::where('email', $request->email)->first();
-            } elseif ($request->type == 'admin') {
-                $user = User::where('email', $request->email)->first();
+            if ($validator->fails()) {
+                return response()->json(['error' => $validator->errors()], 400);
             }
 
-            // Si no se encuentra el usuario o la contraseña no es válida
+            $user = User::where('email', $request->email)->first();
+
             if (!$user || !Hash::check($request->password, $user->password)) {
                 return response()->json(['error' => 'Credenciales inválidas.'], 401);
             }
 
-            // Autenticar y generar el token para la cookie
             Auth::login($user);
-            $token = $user->createToken('auth_token')->plainTextToken;
 
-            // Dependiendo del tipo de usuario, devolver el nombre y apellido
+            $abilities = match ($user->type) {
+                'admin'   => ['server-admin'],
+                'doctor'  => ['server-doctor'],
+                'patient' => ['server-patient'],
+                default   => ['server-unknown'],
+            };
+            $token = $user->createToken('auth_token', $abilities)->plainTextToken;
+
             $userInfo = null;
-            if ($request->type == 'doctor') {
-                $userInfo = ['nombre' => $user->nombre, 'apellido' => $user->apellido];
-            } elseif ($request->type == 'patient') {
-                $userInfo = ['nombre' => $user->nombre, 'apellido' => $user->apellido];
-            } elseif ($request->type == 'admin') {
-                $userInfo = ['nombre' => $user->name, 'apellido' => $user->name];  // El modelo de admin podría tener "name" para ambos
+            switch ($user->type) {
+                case 'admin':
+                    $userInfo = [
+                        'nombre' => $user->name,
+                        'apellido' => $user->name,
+                        'type' => 'admin',
+                    ];
+                    break;
+                case 'doctor':
+                    $doctor = \App\Models\Doctor::find($user->doctor_id);
+                    if (!$doctor) {
+                        return response()->json(['error' => 'Doctor no encontrado.'], 404);
+                    }
+                    $userInfo = [
+                        'nombre' => $doctor->nombre,
+                        'apellido' => $doctor->apellido,
+                        'clinica_diaria' => $doctor->clinica_diaria,
+                        'imagen' => $doctor->imagen,
+                        'type' => 'doctor',
+                    ];
+                    break;
+
+                case 'patient':
+                    $paciente = \App\Models\Paciente::find($user->paciente_id);
+                    if (!$paciente) {
+                        return response()->json(['error' => 'Paciente no encontrado.'], 404);
+                    }
+                    $userInfo = [
+                        'nombre' => $paciente->nombre,
+                        'apellido' => $paciente->apellido,
+                        'type' => 'patient',
+                    ];
+                    break;
+
+                default:
+                    return response()->json(['error' => 'Tipo de usuario desconocido.'], 400);
             }
 
-            // Retornar el mensaje con el nombre y apellido del usuario
             return response()->json([
                 'message' => 'Login exitoso.',
                 'token' => $token,
-                'user' => $userInfo
+                'user' => $userInfo,
             ]);
-        }
 
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'error' => 'Ocurrió un error inesperado.',
                 'details' => $e->getMessage(),
@@ -150,22 +178,51 @@ class AuthController extends Controller
         }
     }
 
-    // Logout (cerrar sesión y eliminar token)
     public function logout(Request $request)
     {
-        // Revoke el token para el logout
-        $request->user()->tokens->each(function ($token) {
-            $token->delete();
-        });
+        $request->user()->currentAccessToken()->delete();
 
-        return response()->json(['message' => 'Logout exitoso.']);
+        return response()->json([
+            'message' => 'Sesión cerrada correctamente.'
+        ]);
     }
 
-
-
-    // Obtener los datos del usuario autenticado
     public function user(Request $request)
     {
-        return response()->json($request->user());
+        $user = $request->user();
+        $userInfo = [
+            'type' => $user->type,  // Tipo de usuario (admin, doctor, patient)
+        ];
+
+        switch ($user->type) {
+            case 'admin':
+                $userInfo['nombre'] = $user->name;
+                $userInfo['apellido'] = implode(' ', array_slice(explode(' ', $user->name), 1));
+                break;
+
+            case 'doctor':
+                $doctor = \App\Models\Doctor::find($user->doctor_id);
+                if ($doctor) {
+                    $userInfo['id'] = $doctor->id;
+                    $userInfo['nombre'] = $doctor->nombre;
+                    $userInfo['apellido'] = $doctor->apellido;
+                    $userInfo['clinica_diaria'] = $doctor->clinica_diaria;
+                    $userInfo['imagen'] = $doctor->imagen;
+                }
+                break;
+
+            case 'patient':
+                $paciente = \App\Models\Paciente::find($user->paciente_id);
+                if ($paciente) {
+                    $userInfo['id'] = $paciente->id;
+                    $userInfo['nombre'] = $paciente->nombre;
+                    $userInfo['apellido'] = $paciente->apellido;
+                }
+                break;
+        }
+
+        // Retornar la información completa del usuario
+        return response()->json($userInfo);
     }
+
 }
