@@ -98,11 +98,16 @@ class doctorController extends Controller
         $userData['doctor_id'] = $doctor->id;
         $user = User::create($userData);
 
-        unset($doctor['password']);
-
         return response()->json([
             'message' => 'Doctor creado exitosamente',
-            'doctor' => $doctor,
+            'doctor' => [
+                'id' => $doctor->id,
+                'nombre' => $doctor->nombre,
+                'apellido' => $doctor->apellido,
+                'clinica_diaria' => $doctor->clinica_diaria,
+                'imagen' => $doctor->imagen,
+                'email' => $doctor->user->email ?? null,
+            ],
             'status' => 201,
         ], 201);
     }

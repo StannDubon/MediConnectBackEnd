@@ -3,22 +3,13 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Foundation\Testing\WithFaker;
+use \Illuminate\Http\UploadedFile as UF;
 use Tests\TestCase;
-use App\Models\Doctor;
-use App\Models\User;
 
 class DoctorCrudTest extends TestCase
 {
     use RefreshDatabase;
-
-    public function setUp(): void
-    {
-        parent::setUp();
-        // Ejecutar migraciones para las tablas necesarias
-        $this->artisan('migrate');
-    }
 
     public function test_doctor_create(): void
     {
@@ -41,7 +32,7 @@ class DoctorCrudTest extends TestCase
                 ]
             ]);
 
-        $this->assertDatabaseHas('doctors', [
+        $this->assertDatabaseHas('doctores', [
             'nombre' => 'Doc',
             'apellido' => 'Tor',
             'clinica_diaria' => 5
@@ -115,7 +106,7 @@ class DoctorCrudTest extends TestCase
             'email' => 'doctor.actualizado@gmail.com',
             'password' => 'nueva123',
             'clinica_diaria' => 10,
-            'imagen' => UploadedFile::fake()->image('new_doctor.jpg'),
+            'imagen' => UF::fake()->image('new_doctor.jpg'),
         ]);
 
         $response->assertStatus(200)
@@ -124,7 +115,7 @@ class DoctorCrudTest extends TestCase
                 'status' => 200,
             ]);
 
-        $this->assertDatabaseHas('doctors', [
+        $this->assertDatabaseHas('doctores', [
             'id' => $doctorId,
             'nombre' => 'Doctor',
             'apellido' => 'Actualizado',
@@ -150,7 +141,7 @@ class DoctorCrudTest extends TestCase
                 'status' => 200,
             ]);
 
-        $this->assertDatabaseHas('doctors', [
+        $this->assertDatabaseHas('doctores', [
             'id' => $doctorId,
             'nombre' => 'SoloNombreCambiado',
             'apellido' => 'Tor' // Mantiene el valor original
@@ -164,7 +155,7 @@ class DoctorCrudTest extends TestCase
         $doctorId = $doctor->json('doctor.id');
 
         // Verificar que existe antes de eliminar
-        $this->assertDatabaseHas('doctors', ['id' => $doctorId]);
+        $this->assertDatabaseHas('doctores', ['id' => $doctorId]);
 
         $response = $this->withHeaders([
             'Authorization' => $token
@@ -177,53 +168,51 @@ class DoctorCrudTest extends TestCase
             ]);
 
         // Verificar que ya no existe
-        $this->assertDatabaseMissing('doctors', ['id' => $doctorId]);
+        $this->assertDatabaseMissing('doctores', ['id' => $doctorId]);
         $this->assertDatabaseMissing('users', ['email' => 'doctor@gmail.com']);
     }
 
-    private function createAdmin(): string
-    {
+    function createAdmin() {
         $admin = [
             'email' => 'admin@gmail.com',
             'password' => '123456',
         ];
-
-        $this->post('/api/signup/admin', [
+        $signupResponse = $this->post('/api/signup/admin', [
             'name' => 'admin',
             'email' => $admin['email'],
             'password' => $admin['password'],
             'password_confirmation' => $admin['password'],
-        ])->assertStatus(201);
+        ]);
 
-        $loginResponse = $this->post('/api/login', $admin)
-            ->assertStatus(200)
-            ->assertJsonStructure([
-                'message',
-                'token',
-                'user' => [
-                    'type',
-                    'nombre',
-                    'apellido',
-                ]
-            ]);
+        $signupResponse->assertStatus(201);
+        $loginResponse = $this->post('/api/login', $admin);
 
-        return "Bearer " . $loginResponse->json('token');
+        $loginResponse->assertStatus(200)
+                ->assertJsonStructure([
+                    'message',
+                    'token',
+                    'user' => [
+                        'type',
+                        'nombre',
+                        'apellido',
+                    ]
+                ]);
+
+        $token = $loginResponse->json('token');
+        return "Bearer " . $token;
     }
 
-    private function createDoctor(string $authToken)
-    {
-        Storage::fake('public');
-
+    function createDoctor($authToken){
         $response = $this->withHeaders([
             'Authorization' => $authToken
-        ])->post('/api/doctores', [
+            ])->post('/api/doctores', [
             'nombre' => 'Doc',
             'apellido' => 'Tor',
             'email' => 'doctor@gmail.com',
             'password' => '123456',
             'password_confirmation' => '123456',
             'clinica_diaria' => 5,
-            'imagen' => UploadedFile::fake()->image('doctor.jpg'),
+            'imagen' => UF::fake()->image('doctor.jpg'),
         ]);
 
         return $response;
