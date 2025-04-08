@@ -95,7 +95,7 @@ class AuthController extends Controller
 
 
 
-    
+
     public function login(Request $request)
     {
         try {
@@ -103,7 +103,6 @@ class AuthController extends Controller
             $validator = Validator::make($request->all(), [
                 'email'    => 'required|email',
                 'password' => 'required',
-                'type'     => 'required|in:admin,doctor,patient', // Asegurarse de que se indique el tipo de usuario
             ]);
 
             // Dependiendo del tipo, buscar al usuario correspondiente
