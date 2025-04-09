@@ -35,3 +35,11 @@ Route::delete('/doctores/{id}', [doctorController::class, 'destroy'])->middlewar
 Route::post('/doctores', [doctorController::class, 'store'])->middleware(['auth:sanctum', 'abilities:server-admin']);
 Route::post('/doctores/update/{id}', [doctorController::class, 'update'])->middleware(['auth:sanctum', 'abilities:server-admin']);
 Route::post('/doctores/patch/{id}', [doctorController::class, 'updatePartial'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+
+/* ------ PACIENTES ------ */
+Route::get('/paciente', [pacienteController::class, 'index']);
+Route::post('/paciente', [pacienteController::class, 'store'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+Route::get('/paciente/{id}', [pacienteController::class, 'show']);
+Route::delete('/paciente/{id}', [pacienteController::class, 'destroy'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+Route::put('/epaciente/{id}', [pacienteController::class, 'update'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+Route::patch('/paciente/{id}', [pacienteController::class, 'updatePartial'])->middleware(['auth:sanctum', 'abilities:server-admin']);
