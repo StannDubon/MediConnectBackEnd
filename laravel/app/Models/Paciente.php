@@ -9,7 +9,7 @@ class Paciente extends Model
 {
     use HasApiTokens;
 
-    protected $table = pacientes;
+    protected $table = 'pacientes';
 
     protected $fillable = [
         'nombre',
