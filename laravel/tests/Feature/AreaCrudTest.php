@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Area;
+use Illuminate\Http\JsonResponse;
 use Tests\TestCase;
 
 class AreaCrudTest extends TestCase
@@ -62,7 +63,6 @@ class AreaCrudTest extends TestCase
         $response = $this->withHeaders([
             'Authorization' => $token
         ])->get("/api/areas/{$areaId}");
-
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'area' => [

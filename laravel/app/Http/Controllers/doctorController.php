@@ -248,4 +248,31 @@ class doctorController extends Controller
             'status' => 200,
         ], 200);
     }
+
+    public function indexWithAreas()
+    {
+        // Obtener todos los doctores con sus áreas
+        $doctores = Doctor::with('areas')->get();
+
+        if ($doctores->isEmpty()) {
+            return response()->json([
+                'message' => 'No se encontraron doctores',
+                'status' => 200,
+            ], 200);
+        }
+
+        // Formatear la respuesta
+        $resultado = $doctores->map(function ($doctor) {
+            return [
+                'doctor_id' => $doctor->id,
+                'nombre_doctor' => $doctor->nombre . ' ' . $doctor->apellido,
+                'areas_asignadas' => $doctor->areas->pluck('nombre')->toArray()
+            ];
+        });
+
+        return response()->json([
+            'areas_doctores' => $resultado,
+            'status' => 200
+        ], 200);
+    }
 }

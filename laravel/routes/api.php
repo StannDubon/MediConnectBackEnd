@@ -9,15 +9,16 @@ use App\Models\User;
 
 use App\Http\Controllers\areaController;
 use App\Http\Controllers\doctorController;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\areaDoctorController;
+use App\Http\Controllers\authController;
 
-Route::post('/signup/admin', [AuthController::class, 'signupAdmin']);
-Route::post('/signup/doctor', [AuthController::class, 'signupDoctor']);
-Route::post('/signup/patient', [AuthController::class, 'signupPatient']);
+Route::post('/signup/admin', [authController::class, 'signupAdmin']);
+Route::post('/signup/doctor', [authController::class, 'signupDoctor']);
+Route::post('/signup/patient', [authController::class, 'signupPatient']);
 
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-Route::get('/user', [AuthController::class, 'user'])->middleware('auth:sanctum');
+Route::post('/login', [authController::class, 'login']);
+Route::post('/logout', [authController::class, 'logout'])->middleware('auth:sanctum');
+Route::get('/user', [authController::class, 'user'])->middleware('auth:sanctum');
 
 /* ------ AREAS ------ */
 Route::get('/areas', [areaController::class, 'index']);
@@ -27,11 +28,19 @@ Route::post('/areas', [areaController::class, 'store'])->middleware(['auth:sanct
 Route::put('/areas/{id}', [areaController::class, 'update'])->middleware(['auth:sanctum', 'abilities:server-admin']);
 Route::patch('/areas/{id}', [areaController::class, 'updatePartial'])->middleware(['auth:sanctum', 'abilities:server-admin']);
 
-
 /* ------ DOCTORES ------ */
 Route::get('/doctores', [doctorController::class, 'index']);
+Route::get('/doctores/areas', [doctorController::class, 'indexWithAreas']);
 Route::get('/doctores/{id}', [doctorController::class, 'show']);
 Route::delete('/doctores/{id}', [doctorController::class, 'destroy'])->middleware(['auth:sanctum', 'abilities:server-admin']);
 Route::post('/doctores', [doctorController::class, 'store'])->middleware(['auth:sanctum', 'abilities:server-admin']);
 Route::post('/doctores/update/{id}', [doctorController::class, 'update'])->middleware(['auth:sanctum', 'abilities:server-admin']);
 Route::post('/doctores/patch/{id}', [doctorController::class, 'updatePartial'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+
+/* ------ DOCTORES AREAS ------ */
+Route::get('/areas_doctores', [areaDoctorController::class, 'index']);
+Route::get('/areas_doctores/{id}', [areaDoctorController::class, 'show']);
+Route::delete('/areas_doctores/{id}', [areaDoctorController::class, 'destroy'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+Route::post('/areas_doctores', [areaDoctorController::class, 'store'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+Route::put('/areas_doctores/{id}', [areaDoctorController::class, 'update'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+Route::patch('/areas_doctores/{id}', [areaDoctorController::class, 'updatePartial'])->middleware(['auth:sanctum', 'abilities:server-admin']);

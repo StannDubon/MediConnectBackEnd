@@ -39,7 +39,7 @@ class AuthController extends Controller
             'apellido' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|string|confirmed|min:6',
-            'clinica_diaria' => 'required|nullable|integer',
+            'clinica_diaria' => 'required|integer',
             'imagen' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
 

@@ -9,7 +9,7 @@ class AreaDoctor extends Model
     protected $table ='areas_doctores';
 
     protected $fillable = [
-        'areas_id',
-        'doctores_id',
+        'area_id',
+        'doctor_id',
     ];
 }

@@ -11,4 +11,9 @@ class Area extends Model
     protected $fillable = [
         'nombre',
     ];
+
+    public function doctores()
+    {
+        return $this->belongsToMany(Doctor::class, 'areas_doctores', 'area_id', 'doctor_id');
+    }
 }
