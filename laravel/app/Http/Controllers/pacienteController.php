@@ -27,7 +27,9 @@ class pacienteController extends Controller
 
         $validator = Validator::make($request->all(),[
             'nombre' => 'required|max:255',
-            'apellido' => 'required|max:255'
+            'apellido' => 'required|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required'
         ]);
 
         if($validator->fails()){
@@ -42,7 +44,9 @@ class pacienteController extends Controller
 
         $paciente = Paciente::create([
             'nombre' => $request->nombre,
-            'apellido' => $request->apellido
+            'apellido' => $request->apellido,
+            'email' => $request->email,
+            'password' => $request->password
         ]);
 
         if(!$paciente){
@@ -118,7 +122,9 @@ class pacienteController extends Controller
 
         $validator = Validator::make($request->all(),[
             'nombre' => 'required|max:255',
-            'apellido' => 'required|max:255'
+            'apellido' => 'required|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required'
         ]);
 
         if($validator->fails()){
@@ -160,7 +166,9 @@ class pacienteController extends Controller
 
         $validator = Validator::make($request->all(),[
             'nombre' => 'required|max:255',
-            'apellido' => 'required|max:255'
+            'apellido' => 'required|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required'
         ]);
 
         if($validator->fails()){
@@ -179,7 +187,11 @@ class pacienteController extends Controller
         if($request->has('apellido')){
             $paciente->apellido = $request->apellido;
         }
-
+        if($request->has('email')){
+            $paciente->email = $request->email;
+        }
+        if($request->has('passowrd'))
+            $paciente->password = $request->password;
         $paciente->save();
 
         $data = [
