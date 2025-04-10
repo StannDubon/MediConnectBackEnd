@@ -190,7 +190,7 @@ class pacienteController extends Controller
         if($request->has('email')){
             $paciente->email = $request->email;
         }
-        if($request->has('passowrd'))
+        if($request->has('password'))
             $paciente->password = $request->password;
         $paciente->save();
 
