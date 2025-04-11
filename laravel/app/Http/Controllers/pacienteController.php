@@ -4,27 +4,26 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Paciente;
+use App\Models\User;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 
 class pacienteController extends Controller
 {
     public function index(){
         $paciente = Paciente::all();
 
-        if($paciente->IsEmpty()){
-            $data = [
+        if($paciente->isEmpty()){
+            return response()->json([
                 'message' => 'No se encontraron pacientes',
                 'status' => 400
-            ];
-
-            return response()->json($data, 400);
+            ], 400);
         }
 
         return response()->json($paciente, 200);
     }
 
     public function store(Request $request){
-
         $validator = Validator::make($request->all(),[
             'nombre' => 'required|max:255',
             'apellido' => 'required|max:255',
@@ -33,152 +32,145 @@ class pacienteController extends Controller
         ]);
 
         if($validator->fails()){
-            $data = [
+            return response()->json([
                 'message' => 'Error en la validación de datos',
                 'error' => $validator->errors(),
                 'status' => 400
-            ];
-
-            return response()->json($data, 400);
+            ], 400);
         }
 
         $paciente = Paciente::create([
             'nombre' => $request->nombre,
-            'apellido' => $request->apellido,
-            'email' => $request->email,
-            'password' => $request->password
+            'apellido' => $request->apellido
         ]);
 
-        if(!$paciente){
-            $data = [
+        $user = User::create([
+            'name' => $request->nombre . ' ' . $request->apellido,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'type' => 'paciente',
+            'paciente_id' => $paciente->id
+        ]);
+
+        if(!$paciente || !$user){
+            return response()->json([
                 'message' => 'Error al crear paciente',
                 'status' => 500,
-            ];
-
-            return response()->json($data, 500);
+            ], 500);
         }
 
-        $data = [
-            'message' => $paciente,
+        return response()->json([
+            'message' => 'Paciente creado exitosamente',
+            'paciente' => $paciente,
+            'usuario' => $user,
             'status' => 201
-        ];
-
-        return response()->json($data, 201);
+        ], 201);
     }
 
     public function show($id){
         $paciente = Paciente::find($id);
 
         if(!$paciente){
-            $data = [
+            return response()->json([
                 'message' => 'Paciente no encontrado',
                 'status' => 404
-            ];
-
-            return response()->json($data, 404);
+            ], 404);
         }
 
-        $data = [
-            'student' => $paciente,
+        return response()->json([
+            'paciente' => $paciente,
             'status' => 200
-        ];        
-
-        return response()->json($data, 200);
+        ], 200);
     }
 
     public function destroy($id){
         $paciente = Paciente::find($id);
 
         if(!$paciente){
-            $data = [
+            return response()->json([
                 'message' => 'Paciente no encontrado',
-                'status' => 200
-            ];
+                'status' => 404
+            ], 404);
+        }
 
-            return response()->json($data, 200);
+        if ($paciente->user) {
+            $paciente->user->delete();
         }
 
         $paciente->delete();
 
-        $data = [
+        return response()->json([
             'message' => 'Paciente eliminado',
             'status' => 200
-        ];
-
-        return response()->json($data, 200);
+        ], 200);
     }
 
-    public function update(Request $request,$id){
+    public function update(Request $request, $id){
         $paciente = Paciente::find($id);
 
         if(!$paciente){
-            $data = [
+            return response()->json([
                 'message' => 'Paciente no encontrado',
-                'status' => 200
-            ];
-
-            return response()->json($data, 200);
+                'status' => 404
+            ], 404);
         }
 
         $validator = Validator::make($request->all(),[
             'nombre' => 'required|max:255',
             'apellido' => 'required|max:255',
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required|email|unique:users,email,' . optional($paciente->user)->id,
             'password' => 'required'
         ]);
 
         if($validator->fails()){
-            $data = [
+            return response()->json([
                 'message' => 'Error en la validación de datos',
                 'error' => $validator->errors(),
                 'status' => 400
-            ];
-
-            return response()->json($data, 400);
+            ], 400);
         }
 
-        $paciente->nombre = $paciente->nombre;
+        $paciente->nombre = $request->nombre;
         $paciente->apellido = $request->apellido;
-
         $paciente->save();
 
-        $data = [
-            'message' => 'Paciente actualizado',
-            'student' => $paciente,
-            'status' => 200
-        ];
+        if ($paciente->user) {
+            $paciente->user->email = $request->email;
+            $paciente->user->password = Hash::make($request->password);
+            $paciente->user->name = $request->nombre . ' ' . $request->apellido;
+            $paciente->user->save();
+        }
 
-        return response()->json($data, 200);
+        return response()->json([
+            'message' => 'Paciente actualizado',
+            'paciente' => $paciente,
+            'status' => 200
+        ], 200);
     }
 
     public function updatePartial(Request $request, $id){
-
         $paciente = Paciente::find($id);
 
         if(!$paciente){
-            $data = [
+            return response()->json([
                 'message' => 'Paciente no encontrado',
-                'status' => 200
-            ];
-
-            return response()->json($data, 200);
+                'status' => 404
+            ], 404);
         }
 
         $validator = Validator::make($request->all(),[
-            'nombre' => 'required|max:255',
-            'apellido' => 'required|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required'
+            'nombre' => 'max:255',
+            'apellido' => 'max:255',
+            'email' => 'email|unique:users,email,' . optional($paciente->user)->id,
+            'password' => 'min:2'
         ]);
 
         if($validator->fails()){
-            $data = [
+            return response()->json([
                 'message' => 'Error en la validación de datos',
                 'error' => $validator->errors(),
                 'status' => 400
-            ];
-
-            return response()->json($data, 400);
+            ], 400);
         }
 
         if($request->has('nombre')){
@@ -187,19 +179,26 @@ class pacienteController extends Controller
         if($request->has('apellido')){
             $paciente->apellido = $request->apellido;
         }
-        if($request->has('email')){
-            $paciente->email = $request->email;
-        }
-        if($request->has('password'))
-            $paciente->password = $request->password;
+
         $paciente->save();
 
-        $data = [
-            'message' => 'Estudiante actualizado',
-            'student' => $paciente,
-            'status' => 200
-        ];
+        if($paciente->user){
+            if($request->has('email')){
+                $paciente->user->email = $request->email;
+            }
+            if($request->has('password')){
+                $paciente->user->password = Hash::make($request->password);
+            }
+            if($request->has('nombre') || $request->has('apellido')){
+                $paciente->user->name = ($request->nombre ?? $paciente->nombre) . ' ' . ($request->apellido ?? $paciente->apellido);
+            }
+            $paciente->user->save();
+        }
 
-        return response()->json($data, 200);
+        return response()->json([
+            'message' => 'Paciente actualizado',
+            'paciente' => $paciente,
+            'status' => 200
+        ], 200);
     }
 }
