@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Http\Controllers\areaController;
 use App\Http\Controllers\doctorController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PacienteController;
 
 Route::post('/signup/admin', [AuthController::class, 'signupAdmin']);
 Route::post('/signup/doctor', [AuthController::class, 'signupDoctor']);
@@ -37,9 +38,9 @@ Route::post('/doctores/update/{id}', [doctorController::class, 'update'])->middl
 Route::post('/doctores/patch/{id}', [doctorController::class, 'updatePartial'])->middleware(['auth:sanctum', 'abilities:server-admin']);
 
 /* ------ PACIENTES ------ */
-Route::get('/paciente', [pacienteController::class, 'index']);
-Route::post('/paciente', [pacienteController::class, 'store'])->middleware(['auth:sanctum', 'abilities:server-admin']);
-Route::get('/paciente/{id}', [pacienteController::class, 'show']);
-Route::delete('/paciente/{id}', [pacienteController::class, 'destroy'])->middleware(['auth:sanctum', 'abilities:server-admin']);
-Route::put('/epaciente/{id}', [pacienteController::class, 'update'])->middleware(['auth:sanctum', 'abilities:server-admin']);
-Route::patch('/paciente/{id}', [pacienteController::class, 'updatePartial'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+Route::get('/paciente', [PacienteController::class, 'index']);
+Route::post('/paciente', [PacienteController::class, 'store']);
+Route::get('/paciente/{id}', [PacienteController::class, 'show']);
+Route::delete('/paciente/{id}', [PacienteController::class, 'destroy']);
+Route::put('/paciente/{id}', [PacienteController::class, 'update']);
+Route::patch('/paciente/{id}', [PacienteController::class, 'updatePartial']);

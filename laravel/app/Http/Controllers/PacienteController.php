@@ -48,7 +48,7 @@ class pacienteController extends Controller
             'name' => $request->nombre . ' ' . $request->apellido,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'type' => 'paciente',
+            'type' => 'patient',
             'paciente_id' => $paciente->id
         ]);
 
