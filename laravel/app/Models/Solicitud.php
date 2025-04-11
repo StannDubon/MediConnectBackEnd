@@ -11,5 +11,10 @@ class Solicitud extends Model
     protected $fillable = [
         'areas_doctores_id',
         'pacientes_id',
+        'fecha',
+        'hora',
+        'motivo',
+        'notas',
+        'fila'
     ];
 }

@@ -12,6 +12,7 @@ use App\Http\Controllers\doctorController;
 use App\Http\Controllers\areaDoctorController;
 use App\Http\Controllers\authController;
 use App\Http\Controllers\pacienteController;
+use App\Http\Controllers\solicitudController;
 
 Route::post('/signup/admin', [authController::class, 'signupAdmin']);
 Route::post('/signup/doctor', [authController::class, 'signupDoctor']);
@@ -46,10 +47,10 @@ Route::post('/areas_doctores', [areaDoctorController::class, 'store'])->middlewa
 Route::put('/areas_doctores/{id}', [areaDoctorController::class, 'update'])->middleware(['auth:sanctum', 'abilities:server-admin']);
 Route::patch('/areas_doctores/{id}', [areaDoctorController::class, 'updatePartial'])->middleware(['auth:sanctum', 'abilities:server-admin']);
 
-/* ------ PACIENTES ------ */
-Route::get('/pacientes', [pacienteController::class, 'index'])->middleware(['auth:sanctum', 'abilities:server-admin']);
-Route::get('/pacientes/{id}', [pacienteController::class, 'show'])->middleware(['auth:sanctum', 'abilities:server-admin']);
-Route::delete('/pacientes/{id}', [pacienteController::class, 'destroy'])->middleware(['auth:sanctum', 'abilities:server-admin']);
-Route::post('/pacientes', [pacienteController::class, 'store'])->middleware(['auth:sanctum', 'abilities:server-admin']);
-Route::update('/pacientes/{id}', [pacienteController::class, 'update'])->middleware(['auth:sanctum', 'abilities:server-admin']);
-Route::patch('/pacientes/{id}', [pacienteController::class, 'updatePartial'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+/* ------ SOLICITUDES ------ */
+Route::get('/solicitudes', [solicitudController::class, 'index']);
+Route::get('/solicitudes/{id}', [solicitudController::class, 'show']);
+Route::delete('/solicitudes/{id}', [solicitudController::class, 'destroy'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+Route::post('/solicitudes', [solicitudController::class, 'store'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+Route::put('/solicitudes/{id}', [solicitudController::class, 'update'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+Route::patch('/solicitudes/{id}', [solicitudController::class, 'updatePartial'])->middleware(['auth:sanctum', 'abilities:server-admin']);

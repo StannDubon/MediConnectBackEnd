@@ -15,6 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('areas_doctores_id')->constrained()->onDelete('cascade');
             $table->foreignId('pacientes_id')->constrained('pacientes')->onDelete('cascade');
+            $table->date('fecha');
+            $table->time('hora');
+            $table->text('motivo')->nullable();
+            $table->text('notas')->nullable();
+            $table->integer('fila');
             $table->timestamps();
         });
     }
