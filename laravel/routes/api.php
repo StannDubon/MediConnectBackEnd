@@ -9,7 +9,7 @@ use App\Models\User;
 
 use App\Http\Controllers\areaController;
 use App\Http\Controllers\doctorController;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\authController;
 
 Route::post('/signup/admin', [AuthController::class, 'signupAdmin']);
 Route::post('/signup/doctor', [AuthController::class, 'signupDoctor']);
