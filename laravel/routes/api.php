@@ -9,14 +9,10 @@ use App\Models\User;
 
 use App\Http\Controllers\areaController;
 use App\Http\Controllers\doctorController;
-<<<<<<< HEAD
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PacienteController;
 use App\Http\Controllers\InventarioController;
-=======
-use App\Http\Controllers\authController;
-use App\Http\Controllers\pacienteController;
->>>>>>> origin/main
+
 
 Route::post('/signup/admin', [AuthController::class, 'signupAdmin']);
 Route::post('/signup/doctor', [AuthController::class, 'signupDoctor']);
