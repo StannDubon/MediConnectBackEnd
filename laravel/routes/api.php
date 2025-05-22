@@ -13,6 +13,7 @@ use App\Http\Controllers\areaDoctorController;
 use App\Http\Controllers\authController;
 use App\Http\Controllers\pacienteController;
 use App\Http\Controllers\solicitudController;
+use App\Http\Controllers\InventarioController;
 
 Route::post('/signup/admin', [authController::class, 'signupAdmin']);
 Route::post('/signup/doctor', [authController::class, 'signupDoctor']);
@@ -54,3 +55,19 @@ Route::delete('/solicitudes/{id}', [solicitudController::class, 'destroy'])->mid
 Route::post('/solicitudes', [solicitudController::class, 'store'])->middleware(['auth:sanctum', 'abilities:server-admin']);
 Route::put('/solicitudes/{id}', [solicitudController::class, 'update'])->middleware(['auth:sanctum', 'abilities:server-admin']);
 Route::patch('/solicitudes/{id}', [solicitudController::class, 'updatePartial'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+
+/* ------ PACIENTES ------ */
+Route::get('/paciente', [PacienteController::class, 'index']);
+Route::post('/paciente', [PacienteController::class, 'store'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+Route::get('/paciente/{id}', [PacienteController::class, 'show']);
+Route::delete('/paciente/{id}', [PacienteController::class, 'destroy'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+Route::put('/paciente/{id}', [PacienteController::class, 'update'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+Route::patch('/paciente/{id}', [PacienteController::class, 'updatePartial'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+
+/* ------ INVENTARIO ------ */
+Route::get('inventarios', [InventarioController::class, 'index']);
+Route::get('inventarios/{id}', [InventarioController::class, 'show']);
+Route::post('inventarios', [InventarioController::class, 'store'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+Route::put('inventarios/{id}', [InventarioController::class, 'update'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+Route::patch('inventarios/{id}', [InventarioController::class, 'updatePartial'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+Route::delete('inventarios/{id}', [InventarioController::class, 'destroy'])->middleware(['auth:sanctum', 'abilities:server-admin']);
