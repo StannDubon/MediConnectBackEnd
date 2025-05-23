@@ -51,10 +51,11 @@ Route::patch('/areas_doctores/{id}', [areaDoctorController::class, 'updatePartia
 /* ------ SOLICITUDES ------ */
 Route::get('/solicitud', [solicitudController::class, 'index']);
 Route::get('/solicitud/{id}', [solicitudController::class, 'show']);
-Route::delete('/solicitud/{id}', [solicitudController::class, 'destroy'])->middleware(['auth:sanctum', 'abilities:server-admin']);
 Route::post('/solicitud', [solicitudController::class, 'store'])->middleware(['auth:sanctum', 'abilities:server-admin']);
-Route::put('/solicitud/{id}', [solicitudController::class, 'update'])->middleware(['auth:sanctum', 'abilities:server-admin']);
-Route::patch('/solicitud/{id}', [solicitudController::class, 'updatePartial'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+
+Route::put('/solicitud/{id}', [solicitudController::class, 'updateFromPatient'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+Route::put('/solicitud/{id}/notas', [solicitudController::class, 'update'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+Route::patch('/solicitud/{id}', [solicitudController::class, 'updatePartialFromPatient'])->middleware(['auth:sanctum', 'abilities:server-admin']);
 
 /* ------ PACIENTES ------ */
 Route::get('/paciente', [pacienteController::class, 'index']);

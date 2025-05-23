@@ -11,6 +11,9 @@ use App\Models\Doctor;
 use App\Models\AreaDoctor;
 use Illuminate\Support\Facades\Hash;
 use \Illuminate\Http\UploadedFile as UF;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
+
 
 class SolicitudCrudTest extends TestCase
 {
@@ -196,8 +199,210 @@ class SolicitudCrudTest extends TestCase
                     'areas_doctores_id',
                     'pacientes_id',
                     'motivo',
+                    'fecha',
+                    'hora'
+                ]);
+    }
+
+    public function test_update_solicitud_from_patient()
+    {
+        // 1. Crear datos iniciales
+        $adminToken = $this->createAdmin();
+        $pacienteData = $this->createPaciente();
+        $pacienteToken = $pacienteData['token'];
+        
+        $doctor = $this->createDoctor($adminToken);
+        $area = $this->createArea($adminToken);
+        $areaDoctor = $this->createAreaDoctor($adminToken, $doctor['doctor']['id'], $area['area']['id']);
+
+        // 2. Crear una solicitud inicial (como paciente)
+        $createResponse = $this->withHeaders(['Authorization' => $pacienteToken])
+            ->post('/api/solicitud', [
+                'areas_doctores_id' => $areaDoctor['area_doctor']['id'],
+                'pacientes_id' => $pacienteData['paciente']['id'],
+                'motivo' => 'Motivo inicial'
+            ]);
+        
+        $solicitudId = $createResponse->json()['solicitud']['id'];
+
+        // 3. Crear otra área y doctor para la actualización
+        $newDoctor = $this->createDoctor($adminToken, [
+            'nombre' => 'Nuevo',
+            'apellido' => 'Doctor',
+            'email' => 'nuevo.doctor@example.com'
+        ]);
+        $newArea = $this->createArea($adminToken, ['nombre' => 'Nueva Area']);
+        $newAreaDoctor = $this->createAreaDoctor($adminToken, $newDoctor['doctor']['id'], $newArea['area']['id']);
+
+        // 4. Datos para actualizar
+        $updateData = [
+            'areas_doctores_id' => $newAreaDoctor['area_doctor']['id'],
+            'motivo' => 'Nuevo motivo de consulta'
+        ];
+
+        // 5. Ejecutar la actualización (como paciente)
+        $response = $this->withHeaders([
+            'Authorization' => $pacienteToken
+        ])->put("/api/solicitud/{$solicitudId}", $updateData);
+
+
+        // 6. Verificaciones
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'Solicitud actualizada exitosamente',
+                'status' => 200
+            ])
+            ->assertJsonStructure([
+                'message',
+                'solicitud' => [
+                    'id',
+                    'areas_doctores_id', 
+                    'pacientes_id',
+                    'motivo',
                     'created_at',
                     'updated_at'
-                ]);
+                ],
+                'status'
+            ]);
+
+        // 7. Verificar que los cambios se guardaron en la base de datos
+        $this->assertDatabaseHas('solicitudes', [
+            'id' => $solicitudId,
+            'areas_doctores_id' => $newAreaDoctor['area_doctor']['id'],
+            'motivo' => 'Nuevo motivo de consulta'
+        ]);
+    }
+
+    public function test_update_nonexistent_solicitud_from_patient()
+    {
+        // 1. Crear usuario paciente
+        $pacienteData = $this->createPaciente();
+        
+        // 2. Usar un ID que seguramente no exista
+        $nonExistentId = 9999;
+    
+        // 3. Intentar actualizar solicitud inexistente
+        $response = $this->withHeaders([
+            'Authorization' => $pacienteData['token']
+        ])->put("/api/solicitud/{$nonExistentId}", [
+            'areas_doctores_id' => 1,
+            'motivo' => 'Motivo'
+        ]);
+    
+        // 4. Verificaciones
+        $response->assertStatus(404)
+            ->assertJson([
+                'message' => 'Solicitud no encontrada',
+                'status' => 404
+            ]);
+    }
+
+    public function test_update_solicitud_invalid_data()
+    {
+        // Crear datos iniciales
+        $adminToken = $this->createAdmin();
+        $pacienteData = $this->createPaciente();
+        
+        $doctor = $this->createDoctor($adminToken);
+        $area = $this->createArea($adminToken);
+        $areaDoctor = $this->createAreaDoctor($adminToken, $doctor['doctor']['id'], $area['area']['id']);
+
+        // Crear solicitud
+        $createResponse = $this->withHeaders(['Authorization' => $pacienteData['token']])
+            ->post('/api/solicitud', [
+                'areas_doctores_id' => $areaDoctor['area_doctor']['id'],
+                'pacientes_id' => $pacienteData['paciente']['id'],
+                'motivo' => 'Motivo inicial'
+            ]);
+        
+        $solicitudId = $createResponse->json()['solicitud']['id'];
+
+        // Intentar actualizar con datos inválidos
+        $response = $this->withHeaders([
+            'Authorization' => $pacienteData['token']
+        ])->put("/api/solicitud/{$solicitudId}", [
+            'areas_doctores_id' => 'no-es-un-numero', // Inválido
+            'motivo' => '' // Inválido
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonStructure([
+                'message',
+                'errors' => [
+                    'areas_doctores_id',
+                    'motivo'
+                ],
+                'status'
+            ]);
+    }
+
+    public function test_update_solicitud()
+    {
+        // 1. Crear datos iniciales
+        $adminToken = $this->createAdmin();
+        $pacienteData = $this->createPaciente();
+        $pacienteToken = $pacienteData['token'];
+        
+        $doctor = $this->createDoctor($adminToken);
+        $area = $this->createArea($adminToken);
+        $areaDoctor = $this->createAreaDoctor($adminToken, $doctor['doctor']['id'], $area['area']['id']);
+
+        // 2. Crear una solicitud inicial (como paciente)
+        $createResponse = $this->withHeaders(['Authorization' => $pacienteToken])
+            ->post('/api/solicitud', [
+                'areas_doctores_id' => $areaDoctor['area_doctor']['id'],
+                'pacientes_id' => $pacienteData['paciente']['id'],
+                'motivo' => 'Motivo inicial'
+            ]);
+        
+        $solicitudId = $createResponse->json()['solicitud']['id'];
+
+        // 3. Crear otra área y doctor para la actualización
+        $newDoctor = $this->createDoctor($adminToken, [
+            'nombre' => 'Nuevo',
+            'apellido' => 'Doctor',
+            'email' => 'nuevo.doctor@example.com'
+        ]);
+        $newArea = $this->createArea($adminToken, ['nombre' => 'Nueva Area']);
+        $newAreaDoctor = $this->createAreaDoctor($adminToken, $newDoctor['doctor']['id'], $newArea['area']['id']);
+
+        // 4. Datos para actualizar
+        $updateData = [
+            'areas_doctores_id' => $newAreaDoctor['area_doctor']['id'],
+            'motivo' => 'Nuevo motivo de consulta',
+            'notas' => 'Nuevo motivo de consulta',
+        ];
+
+        // 5. Ejecutar la actualización (como paciente)
+        $response = $this->withHeaders([
+            'Authorization' => $pacienteToken
+        ])->put("/api/solicitud/{$solicitudId}/notas", $updateData);
+
+
+        // 6. Verificaciones
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'Solicitud actualizada exitosamente',
+                'status' => 200
+            ])
+            ->assertJsonStructure([
+                'message',
+                'solicitud' => [
+                    'id',
+                    'areas_doctores_id', 
+                    'pacientes_id',
+                    'motivo',
+                    'created_at',
+                    'updated_at'
+                ],
+                'status'
+            ]);
+
+        // 7. Verificar que los cambios se guardaron en la base de datos
+        $this->assertDatabaseHas('solicitudes', [
+            'id' => $solicitudId,
+            'areas_doctores_id' => $newAreaDoctor['area_doctor']['id'],
+            'motivo' => 'Nuevo motivo de consulta'
+        ]);
     }
 }

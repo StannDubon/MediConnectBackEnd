@@ -141,6 +141,7 @@ class authController extends Controller
                         return response()->json(['error' => 'Doctor no encontrado.'], 404);
                     }
                     $userInfo = [
+                        'id' => $user->id,
                         'doctor_id' => $doctor->id,
                         'nombre' => $doctor->nombre,
                         'apellido' => $doctor->apellido,
@@ -156,6 +157,7 @@ class authController extends Controller
                         return response()->json(['error' => 'Paciente no encontrado.'], 404);
                     }
                     $userInfo = [
+                        'id' => $user->id,
                         'paciente_id' => $paciente->id,
                         'nombre' => $paciente->nombre,
                         'apellido' => $paciente->apellido,
