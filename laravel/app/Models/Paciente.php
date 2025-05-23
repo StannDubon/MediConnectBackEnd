@@ -14,4 +14,14 @@ class Paciente extends Model
         'nombre',
         'apellido'
     ];
+
+    public function solicitudes()
+    {
+        return $this->hasMany(Solicitud::class, 'pacientes_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

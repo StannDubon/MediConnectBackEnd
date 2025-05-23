@@ -18,8 +18,8 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('type', ['admin', 'doctor', 'patient'])->default('patient');
-            $table->foreignId('doctor_id')->nullable()->constrained('doctores');
-            $table->foreignId('paciente_id')->nullable()->constrained('pacientes');
+            $table->foreignId('doctor_id')->nullable()->constrained('doctores')->onDelete('cascade');
+            $table->foreignId('paciente_id')->nullable()->constrained('pacientes')->onDelete('cascade');
             $table->rememberToken();
             $table->timestamps();
         });

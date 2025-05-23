@@ -12,4 +12,9 @@ class AreaDoctor extends Model
         'area_id',
         'doctor_id',
     ];
+
+    public function solicitudes()
+    {
+        return $this->hasMany(Solicitud::class, 'areas_doctores_id');
+    }
 }

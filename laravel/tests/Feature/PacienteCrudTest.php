@@ -54,8 +54,8 @@ class PacienteCrudTest extends TestCase
         ])->get('/api/paciente');
 
         $response->assertStatus(200)
-                 ->assertJsonFragment(['nombre' => 'Ana'])
-                 ->assertJsonFragment(['nombre' => 'Carlos']);
+                ->assertJsonFragment(['nombre' => 'Ana'])
+                ->assertJsonFragment(['nombre' => 'Carlos']);
     }
 
     public function test_create_paciente()
@@ -74,10 +74,10 @@ class PacienteCrudTest extends TestCase
         ])->post('/api/paciente', $data);
 
         $response->assertStatus(201)
-                 ->assertJson([
-                     'message' => 'Paciente creado exitosamente',
-                     'status' => 201
-                 ]);
+                ->assertJson([
+                    'message' => 'Paciente creado exitosamente',
+                    'status' => 201
+                ]);
     }
 
     public function test_show_paciente()
@@ -90,7 +90,7 @@ class PacienteCrudTest extends TestCase
         ])->get("/api/paciente/{$paciente->id}");
 
         $response->assertStatus(200)
-                 ->assertJsonFragment(['nombre' => 'Luigi']);
+                ->assertJsonFragment(['nombre' => 'Luigi']);
     }
 
     public function test_update_paciente()
@@ -112,10 +112,10 @@ class PacienteCrudTest extends TestCase
         ])->put("/api/paciente/{$paciente->id}", $data);
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'message' => 'Paciente actualizado',
-                     'status' => 200
-                 ]);
+                ->assertJson([
+                    'message' => 'Paciente actualizado',
+                    'status' => 200
+                ]);
     }
 
     public function test_update_partial_paciente()
@@ -130,10 +130,10 @@ class PacienteCrudTest extends TestCase
         ]);
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'message' => 'Paciente actualizado',
-                     'status' => 200
-                 ]);
+                ->assertJson([
+                    'message' => 'Paciente actualizado',
+                    'status' => 200
+                ]);
     }
 
     public function test_delete_paciente()
@@ -146,10 +146,10 @@ class PacienteCrudTest extends TestCase
         ])->delete("/api/paciente/{$paciente->id}");
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'message' => 'Paciente eliminado',
-                     'status' => 200
-                 ]);
+                ->assertJson([
+                    'message' => 'Paciente eliminado',
+                    'status' => 200
+                ]);
 
         $this->assertDatabaseMissing('pacientes', [
             'id' => $paciente->id

@@ -83,20 +83,25 @@ class pacienteController extends Controller
         ], 200);
     }
 
-    public function destroy($id){
+    public function destroy($id)
+    {
         $paciente = Paciente::find($id);
 
-        if(!$paciente){
+        if(!$paciente) {
             return response()->json([
                 'message' => 'Paciente no encontrado',
                 'status' => 404
             ], 404);
         }
 
+        // First, check if there's an associated user
         if ($paciente->user) {
-            $paciente->user->delete();
+            // Remove the foreign key reference from the user
+            $paciente->user->paciente_id = null;
+            $paciente->user->save();
         }
 
+        // Then delete the paciente
         $paciente->delete();
 
         return response()->json([

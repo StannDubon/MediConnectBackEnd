@@ -129,6 +129,7 @@ class authController extends Controller
             switch ($user->type) {
                 case 'admin':
                     $userInfo = [
+                        'id' => $user->id,
                         'nombre' => $user->name,
                         'apellido' => $user->name,
                         'type' => 'admin',
@@ -140,6 +141,7 @@ class authController extends Controller
                         return response()->json(['error' => 'Doctor no encontrado.'], 404);
                     }
                     $userInfo = [
+                        'doctor_id' => $doctor->id,
                         'nombre' => $doctor->nombre,
                         'apellido' => $doctor->apellido,
                         'clinica_diaria' => $doctor->clinica_diaria,
@@ -154,6 +156,7 @@ class authController extends Controller
                         return response()->json(['error' => 'Paciente no encontrado.'], 404);
                     }
                     $userInfo = [
+                        'paciente_id' => $paciente->id,
                         'nombre' => $paciente->nombre,
                         'apellido' => $paciente->apellido,
                         'type' => 'patient',

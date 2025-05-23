@@ -49,20 +49,20 @@ Route::put('/areas_doctores/{id}', [areaDoctorController::class, 'update'])->mid
 Route::patch('/areas_doctores/{id}', [areaDoctorController::class, 'updatePartial'])->middleware(['auth:sanctum', 'abilities:server-admin']);
 
 /* ------ SOLICITUDES ------ */
-Route::get('/solicitudes', [solicitudController::class, 'index']);
-Route::get('/solicitudes/{id}', [solicitudController::class, 'show']);
-Route::delete('/solicitudes/{id}', [solicitudController::class, 'destroy'])->middleware(['auth:sanctum', 'abilities:server-admin']);
-Route::post('/solicitudes', [solicitudController::class, 'store'])->middleware(['auth:sanctum', 'abilities:server-admin']);
-Route::put('/solicitudes/{id}', [solicitudController::class, 'update'])->middleware(['auth:sanctum', 'abilities:server-admin']);
-Route::patch('/solicitudes/{id}', [solicitudController::class, 'updatePartial'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+Route::get('/solicitud', [solicitudController::class, 'index']);
+Route::get('/solicitud/{id}', [solicitudController::class, 'show']);
+Route::delete('/solicitud/{id}', [solicitudController::class, 'destroy'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+Route::post('/solicitud', [solicitudController::class, 'store'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+Route::put('/solicitud/{id}', [solicitudController::class, 'update'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+Route::patch('/solicitud/{id}', [solicitudController::class, 'updatePartial'])->middleware(['auth:sanctum', 'abilities:server-admin']);
 
 /* ------ PACIENTES ------ */
-Route::get('/paciente', [PacienteController::class, 'index']);
-Route::post('/paciente', [PacienteController::class, 'store'])->middleware(['auth:sanctum', 'abilities:server-admin']);
-Route::get('/paciente/{id}', [PacienteController::class, 'show']);
-Route::delete('/paciente/{id}', [PacienteController::class, 'destroy'])->middleware(['auth:sanctum', 'abilities:server-admin']);
-Route::put('/paciente/{id}', [PacienteController::class, 'update'])->middleware(['auth:sanctum', 'abilities:server-admin']);
-Route::patch('/paciente/{id}', [PacienteController::class, 'updatePartial'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+Route::get('/paciente', [pacienteController::class, 'index']);
+Route::post('/paciente', [pacienteController::class, 'store'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+Route::get('/paciente/{id}', [pacienteController::class, 'show']);
+Route::delete('/paciente/{id}', [pacienteController::class, 'destroy'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+Route::put('/paciente/{id}', [pacienteController::class, 'update'])->middleware(['auth:sanctum', 'abilities:server-admin']);
+Route::patch('/paciente/{id}', [pacienteController::class, 'updatePartial'])->middleware(['auth:sanctum', 'abilities:server-admin']);
 
 /* ------ INVENTARIO ------ */
 Route::get('inventarios', [InventarioController::class, 'index']);
