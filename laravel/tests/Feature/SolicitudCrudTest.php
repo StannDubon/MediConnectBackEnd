@@ -162,4 +162,42 @@ class SolicitudCrudTest extends TestCase
                     ]
                 ]);
     }
+
+    public function test_show_solicitud()
+    {
+        $token = $this->createAdmin();
+    
+        // 1. Primero crear una solicitud
+        $pac = $this->createPaciente();
+        $doc = $this->createDoctor($token);
+        $area = $this->createArea($token);
+        $areaDoc = $this->createAreaDoctor($token, $doc['doctor']['id'], $area['area']['id']);
+    
+        // Crear solicitud
+        $createResponse = $this->withHeaders(['Authorization' => $token])
+            ->post('/api/solicitud', [
+                'areas_doctores_id' => $areaDoc['area_doctor']['id'],
+                'pacientes_id' => $pac['paciente']['id'],
+                'motivo' => 'Consulta de prueba'
+            ]);
+    
+        // Obtener el ID de la solicitud creada
+        $solicitudData = $createResponse->json();
+        $solicitudId = $solicitudData['solicitud']['id']; // Ajusta según la estructura real de tu respuesta
+    
+        // Obtener la solicitud específica
+        $response = $this->withHeaders([
+            'Authorization' => $token
+        ])->get("/api/solicitud/{$solicitudId}");
+    
+        $response->assertStatus(200)
+                ->assertJsonStructure([
+                    'id',
+                    'areas_doctores_id',
+                    'pacientes_id',
+                    'motivo',
+                    'created_at',
+                    'updated_at'
+                ]);
+    }
 }

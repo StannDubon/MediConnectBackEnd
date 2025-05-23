@@ -38,19 +38,16 @@ class solicitudController extends Controller
         ], 201);
     }
 
-    public function show(Request $request){
-        $validated = $request->validate([
-            'areas_doctores_id' => 'integer|required|exists:areas_doctores,id',
-            'pacientes_id' => 'integer|required|exists:pacientes,id',
-            'motivo' => 'required|string|max:255'
-        ]);
+    public function show($id){
+        $solicitud = Solicitud::find($id);
 
-        $data = Solicitud::create($validated);
+        if (!$solicitud) {
+            return response()->json([
+                'message' => 'Solicitud no encontrado',
+                'status' => 404
+            ], 404);
+        }
 
-        return response()->json([
-            'message' => 'Solicitud enviada exitosamente',
-            'solicitud' => $data,
-            'status' => 200,
-        ], 201);
+        return response()->json($solicitud, 200);
     }
 }
