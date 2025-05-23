@@ -14,7 +14,8 @@ class Doctor extends Model
         'nombre',
         'apellido',
         'clinica_diaria',
-        'imagen'
+        'imagen',
+        'area_doctor',
     ];
 
     public function user()
@@ -22,8 +23,4 @@ class Doctor extends Model
         return $this->hasOne(User::class, 'doctor_id');
     }
 
-    public function areas()
-    {
-        return $this->belongsToMany(Area::class, 'areas_doctores', 'doctor_id', 'area_id');
-    }
 }

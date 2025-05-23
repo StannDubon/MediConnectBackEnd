@@ -15,9 +15,9 @@ class Paciente extends Model
         'apellido'
     ];
 
-    public function solicitudes()
+    public function examenes()
     {
-        return $this->hasMany(Solicitud::class, 'pacientes_id');
+        return $this->hasMany(Examenes::class, 'pacientes_id');
     }
 
     public function user()
