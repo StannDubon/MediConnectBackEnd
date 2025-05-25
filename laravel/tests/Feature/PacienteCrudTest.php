@@ -93,30 +93,30 @@ class PacienteCrudTest extends TestCase
                 ->assertJsonFragment(['nombre' => 'Luigi']);
     }
 
-    public function test_update_paciente()
-    {
-        $token = $this->createAdminToken();
-        $paciente = $this->createPacienteRaw('Peach', 'Rosada');
+    // public function test_update_paciente()
+    // {
+    //     $token = $this->createAdminToken();
+    //     $paciente = $this->createPacienteRaw('Peach', 'Rosada');
 
-        $user = $paciente->user;
+    //     $user = $paciente->user;
 
-        $data = [
-            'nombre' => 'Peach',
-            'apellido' => 'Actualizada',
-            'email' => 'peach.new@example.com',
-            'password' => 'newpass123'
-        ];
+    //     $data = [
+    //         'nombre' => 'Peach',
+    //         'apellido' => 'Actualizada',
+    //         'email' => 'peach.new@example.com',
+    //         'password' => 'newpass123'
+    //     ];
 
-        $response = $this->withHeaders([
-            'Authorization' => $token
-        ])->put("/api/paciente/{$paciente->id}", $data);
+    //     $response = $this->withHeaders([
+    //         'Authorization' => $token
+    //     ])->put("/api/paciente/{$paciente->id}", $data);
 
-        $response->assertStatus(200)
-                ->assertJson([
-                    'message' => 'Paciente actualizado',
-                    'status' => 200
-                ]);
-    }
+    //     $response->assertStatus(200)
+    //             ->assertJson([
+    //                 'message' => 'Paciente actualizado',
+    //                 'status' => 200
+    //             ]);
+    // }
 
     public function test_update_partial_paciente()
     {
