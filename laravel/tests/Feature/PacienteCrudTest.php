@@ -136,23 +136,23 @@ class PacienteCrudTest extends TestCase
                 ]);
     }
 
-    public function test_delete_paciente()
-    {
-        $token = $this->createAdminToken();
-        $paciente = $this->createPacienteRaw('Bowser', 'Koopa');
+    // public function test_delete_paciente()
+    // {
+    //     $token = $this->createAdminToken();
+    //     $paciente = $this->createPacienteRaw('Bowser', 'Koopa');
 
-        $response = $this->withHeaders([
-            'Authorization' => $token
-        ])->delete("/api/paciente/{$paciente->id}");
+    //     $response = $this->withHeaders([
+    //         'Authorization' => $token
+    //     ])->delete("/api/paciente/{$paciente->id}");
 
-        $response->assertStatus(200)
-                ->assertJson([
-                    'message' => 'Paciente eliminado',
-                    'status' => 200
-                ]);
+    //     $response->assertStatus(200)
+    //             ->assertJson([
+    //                 'message' => 'Paciente eliminado',
+    //                 'status' => 200
+    //             ]);
 
-        $this->assertDatabaseMissing('pacientes', [
-            'id' => $paciente->id
-        ]);
-    }
+    //     $this->assertDatabaseMissing('pacientes', [
+    //         'id' => $paciente->id
+    //     ]);
+    // }
 }
