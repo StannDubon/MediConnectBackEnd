@@ -16,20 +16,31 @@ class authController extends Controller
 {
     public function signupAdmin(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|string|confirmed|min:6',
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users',
+                'password' => 'required|string|confirmed|min:6',
+            ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'type' => 'admin',
-        ]);
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'type' => 'admin',
+            ]);
 
-        return response()->json(['message' => 'Admin registrado', 'user' => $user], 201);
+            return response()->json([
+                'message' => 'Admin registrado',
+                'user' => $user
+            ], 201);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'message' => 'Error de validación',
+                'errors' => $e->errors(),
+            ], 422);
+        }
     }
 
     public function signupDoctor(Request $request)
@@ -70,27 +81,35 @@ class authController extends Controller
 
     public function signupPatient(Request $request)
     {
-        $request->validate([
-            'nombre' => 'required|string|max:255',
-            'apellido' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|string|confirmed|min:6',
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'nombre' => 'required|string|max:255',
+                'apellido' => 'required|string|max:255',
+                'email' => 'required|email|unique:users',
+                'password' => 'required|string|confirmed|min:6',
+            ]);
 
-        $paciente = Paciente::create([
-            'nombre' => $request->nombre,
-            'apellido' => $request->apellido,
-        ]);
+            $paciente = Paciente::create([
+                'nombre' => $request->nombre,
+                'apellido' => $request->apellido,
+            ]);
 
-        $user = User::create([
-            'name' => $request->nombre . ' ' . $request->apellido,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'type' => 'patient',
-            'paciente_id' => $paciente->id,
-        ]);
+            $user = User::create([
+                'name' => $request->nombre . ' ' . $request->apellido,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'type' => 'patient',
+                'paciente_id' => $paciente->id,
+            ]);
 
-        return response()->json(['message' => 'Paciente registrado', 'user' => $user], 201);
+            return response()->json(['message' => 'Paciente registrado', 'user' => $user], 201);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'message' => 'Error de validación',
+                'errors' => $e->errors(),
+            ], 422);
+        }
     }
 
 

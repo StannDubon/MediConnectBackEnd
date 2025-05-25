@@ -42,7 +42,7 @@ Route::get('/paciente', [pacienteController::class, 'index']);
 Route::post('/paciente', [pacienteController::class, 'store'])->middleware(['auth:sanctum', 'abilities:server-admin,server-doctor']);
 Route::get('/paciente/{id}', [pacienteController::class, 'show']);
 Route::delete('/paciente/{id}', [pacienteController::class, 'destroy'])->middleware(['auth  :sanctum', 'abilities:server-admin,server-doctor']);
-Route::put('/paciente/{id}', [pacienteController::class, 'update']);
+Route::post('/paciente/update/{id}', [pacienteController::class, 'update']);
 Route::patch('/paciente/{id}', [pacienteController::class, 'updatePartial']);
 
 
