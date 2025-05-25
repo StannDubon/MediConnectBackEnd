@@ -67,18 +67,36 @@ class pacienteController extends Controller
         ], 201);
     }
 
-    public function show($id){
-        $paciente = Paciente::find($id);
+    public function show($id)
+    {
+        // Carga la relación user con el paciente
+        $paciente = Paciente::with('user')->find($id);
 
-        if(!$paciente){
+        if(!$paciente) {
             return response()->json([
                 'message' => 'Paciente no encontrado',
                 'status' => 404
             ], 404);
         }
 
+        // Verifica si tiene usuario relacionado
+        if(!$paciente->user) {
+            // Debug: Verifica qué usuario debería estar relacionado
+            $user = User::where('paciente_id', $id)->first();
+
+            return response()->json([
+                'message' => 'Usuario asociado no encontrado (pero existe en users)',
+                'debug' => [
+                    'paciente_id' => $id,
+                    'user_encontrado' => $user
+                ],
+                'status' => 404
+            ], 404);
+        }
+
         return response()->json([
             'paciente' => $paciente,
+            'usuario' => $paciente->user,
             'status' => 200
         ], 200);
     }
