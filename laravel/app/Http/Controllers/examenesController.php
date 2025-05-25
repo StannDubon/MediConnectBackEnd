@@ -32,6 +32,24 @@ class examenesController extends Controller
         ], 201);
     }
 
+    public function porPaciente($paciente_id)
+    {
+
+        $paciente = Paciente::find($paciente_id);
+
+        if (!$paciente) {
+            return response()->json(['message' => 'Paciente no encontrado'], 404);
+        }
+
+        $examenes = Examenes::where('paciente_id', $paciente_id)->get();
+
+        return response()->json([
+            'paciente' => $paciente,
+            'examenes' => $examenes
+        ]);
+    }
+
+
     public function show($id)
     {
         $examen = Examenes::with('paciente')->find($id);

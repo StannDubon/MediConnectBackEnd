@@ -33,6 +33,8 @@ Route::get('/examenes/{id}', [ExamenesController::class, 'show']);
 Route::post('/examenes', [ExamenesController::class, 'store']);
 Route::put('/examenes/{id}', [ExamenesController::class, 'update']);
 Route::delete('/examenes/{id}', [ExamenesController::class, 'destroy']);
+Route::get('/pacientes/{id}/examenes', [examenesController::class, 'porPaciente']);
+
 
 
 /* ------ PACIENTES ------ */
