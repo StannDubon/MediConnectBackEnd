@@ -26,16 +26,16 @@ class DoctorCrudTest extends TestCase
                     'id',
                     'nombre',
                     'apellido',
-                    'clinica_diaria',
                     'imagen',
-                    'email'
+                    'email',
+                    'area_doctor'
                 ]
             ]);
 
         $this->assertDatabaseHas('doctores', [
             'nombre' => 'Doc',
             'apellido' => 'Tor',
-            'clinica_diaria' => 5
+            'area_doctor' => 'Quiroparacticoooo' 
         ]);
 
         $this->assertDatabaseHas('users', [
@@ -60,7 +60,6 @@ class DoctorCrudTest extends TestCase
                         'id',
                         'nombre',
                         'apellido',
-                        'clinica_diaria',
                         'imagen',
                         'email'
                     ]
@@ -84,7 +83,6 @@ class DoctorCrudTest extends TestCase
                 'doctor' => [
                     'nombre',
                     'apellido',
-                    'clinica_diaria',
                     'imagen',
                     'email'
                 ],
@@ -105,7 +103,6 @@ class DoctorCrudTest extends TestCase
             'apellido' => 'Actualizado',
             'email' => 'doctor.actualizado@gmail.com',
             'password' => 'nueva123',
-            'clinica_diaria' => 10,
             'imagen' => UF::fake()->image('new_doctor.jpg'),
         ]);
 
@@ -119,7 +116,6 @@ class DoctorCrudTest extends TestCase
             'id' => $doctorId,
             'nombre' => 'Doctor',
             'apellido' => 'Actualizado',
-            'clinica_diaria' => 10
         ]);
     }
 
@@ -211,8 +207,8 @@ class DoctorCrudTest extends TestCase
             'email' => 'doctor@gmail.com',
             'password' => '123456',
             'password_confirmation' => '123456',
-            'clinica_diaria' => 5,
             'imagen' => UF::fake()->image('doctor.jpg'),
+            'area_doctor' => 'Quiroparactico',
         ]);
 
         return $response;

@@ -36,8 +36,8 @@ class AuthTest extends TestCase
             'email' => 'doctor@gmail.com',
             'password' => '123456',
             'password_confirmation' => '123456',
-            'clinica_diaria' => 5,
             'imagen' => UF::fake()->image('doctor.jpg'),
+            'area_doctor' => 'Quiropráctico',
         ];
 
         $response = $this->post('/api/signup/doctor', $doctor);
@@ -107,8 +107,8 @@ class AuthTest extends TestCase
             'email' => $doctor['email'],
             'password' => $doctor['password'],
             'password_confirmation' => $doctor['password'],
-            'clinica_diaria' => 5,
             'imagen' => UF::fake()->image('doctor.jpg'),
+            'area_doctor' => 'Quiropráctico',
         ]);
 
         $response = $this->post('/api/login', $doctor);
@@ -121,7 +121,6 @@ class AuthTest extends TestCase
                         'type',
                         'nombre',
                         'apellido',
-                        'clinica_diaria',
                         'imagen',
                     ]
                 ]);

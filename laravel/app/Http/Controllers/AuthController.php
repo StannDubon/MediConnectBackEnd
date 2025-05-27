@@ -50,8 +50,8 @@ class authController extends Controller
             'apellido' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|string|confirmed|min:6',
-            'clinica_diaria' => 'required|integer',
-            'imagen' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+            'imagen' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'area_doctor' => 'required|string|max:255',
         ]);
 
         $image = $request->file('imagen');
@@ -61,7 +61,7 @@ class authController extends Controller
         $doctor = Doctor::create([
             'nombre' => $request->nombre,
             'apellido' => $request->apellido,
-            'clinica_diaria' => $request->clinica_diaria,
+            'area_doctor' => $request->area_doctor,
             'imagen' => $filename,
         ]);
 
@@ -164,7 +164,6 @@ class authController extends Controller
                         'doctor_id' => $doctor->id,
                         'nombre' => $doctor->nombre,
                         'apellido' => $doctor->apellido,
-                        'clinica_diaria' => $doctor->clinica_diaria,
                         'imagen' => $doctor->imagen,
                         'type' => 'doctor',
                     ];
@@ -230,7 +229,6 @@ class authController extends Controller
                     $userInfo['id'] = $doctor->id;
                     $userInfo['nombre'] = $doctor->nombre;
                     $userInfo['apellido'] = $doctor->apellido;
-                    $userInfo['clinica_diaria'] = $doctor->clinica_diaria;
                     $userInfo['imagen'] = $doctor->imagen;
                 }
                 break;

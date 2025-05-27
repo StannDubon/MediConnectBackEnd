@@ -30,7 +30,6 @@ class doctorController extends Controller
                 'id' => $doctor->id,
                 'nombre' => $doctor->nombre,
                 'apellido' => $doctor->apellido,
-                'clinica_diaria' => $doctor->clinica_diaria,
                 'imagen' => $doctor->imagen,
                 'email' => $doctor->user->email ?? null,
             ];
@@ -56,7 +55,6 @@ class doctorController extends Controller
         $data = [
             'nombre' => $doctor->nombre,
             'apellido' => $doctor->apellido,
-            'clinica_diaria' => $doctor->clinica_diaria,
             'imagen' => $doctor->imagen,
             'email' => $doctor->user->email ?? null,
         ];
@@ -75,7 +73,6 @@ class doctorController extends Controller
             'apellido' => 'required|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required',
-            'clinica_diaria' => 'required|integer',
             'imagen' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
 
@@ -104,9 +101,9 @@ class doctorController extends Controller
                 'id' => $doctor->id,
                 'nombre' => $doctor->nombre,
                 'apellido' => $doctor->apellido,
-                'clinica_diaria' => $doctor->clinica_diaria,
                 'imagen' => $doctor->imagen,
                 'email' => $doctor->user->email ?? null,
+                'area_doctor' => $doctor->area_doctor
             ],
             'status' => 201,
         ], 201);
@@ -147,7 +144,6 @@ class doctorController extends Controller
             'apellido' => 'required|max:255',
             'email' => 'required|email|unique:users,email,' . $doctor->user->id,
             'password' => 'required',
-            'clinica_diaria' => 'required|integer',
             'imagen' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
 
@@ -159,7 +155,6 @@ class doctorController extends Controller
 
         $doctor->nombre = $request->nombre;
         $doctor->apellido = $request->apellido;
-        $doctor->clinica_diaria = $request->clinica_diaria;
         $doctor->imagen = $filename;
 
         $doctor->user->email = $request->email;
@@ -174,7 +169,6 @@ class doctorController extends Controller
                 'id' => $doctor->id,
                 'nombre' => $doctor->nombre,
                 'apellido' => $doctor->apellido,
-                'clinica_diaria' => $doctor->clinica_diaria,
                 'imagen' => $doctor->imagen,
                 'email' => $doctor->user->email ?? null,
             ],
@@ -204,7 +198,6 @@ class doctorController extends Controller
             'apellido' => 'max:255',
             'email' => 'email|unique:users,email,' . $doctor->user->id,
             'password' => 'min:2',
-            'clinica_diaria' => 'integer',
             'imagen' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
 
@@ -213,9 +206,6 @@ class doctorController extends Controller
         }
         if($request->has('apellido')){
             $doctor->apellido = $request->apellido;
-        }
-        if($request->has('clinica_diaria')){
-            $doctor->clinica_diaria = (int)$request->clinica_diaria;
         }
         if($request->has('imagen')){
             $image = $request->file('imagen');
@@ -241,7 +231,6 @@ class doctorController extends Controller
                 'id' => $doctor->id,
                 'nombre' => $doctor->nombre,
                 'apellido' => $doctor->apellido,
-                'clinica_diaria' => $doctor->clinica_diaria,
                 'imagen' => $doctor->imagen,
                 'email' => $doctor->user->email ?? null,
             ],
