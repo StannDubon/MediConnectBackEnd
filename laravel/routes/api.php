@@ -44,5 +44,6 @@ Route::get('/paciente/{id}', [pacienteController::class, 'show']);
 Route::delete('/paciente/{id}', [pacienteController::class, 'destroy'])->middleware(['auth  :sanctum', 'abilities:server-admin,server-doctor']);
 Route::post('/paciente/update/{id}', [pacienteController::class, 'update']);
 Route::patch('/paciente/{id}', [pacienteController::class, 'updatePartial']);
+Route::get('/reporte/examenes', [ExamenesController::class, 'reportePDF']);
 
 

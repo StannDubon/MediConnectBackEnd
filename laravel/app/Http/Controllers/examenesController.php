@@ -7,6 +7,7 @@ use App\Models\Paciente;
 use App\Models\Examenes;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class examenesController extends Controller
 {
@@ -96,5 +97,13 @@ class examenesController extends Controller
         $examen->delete();
 
         return response()->json(['message' => 'Examen eliminado']);
+    }
+
+    public function reportePDF()
+    {
+        $examenes = Examenes::select('fecha', 'titulo', 'descripcion')->get();
+        $pdf = Pdf::loadView('reportes.examenes', compact('examenes'));
+
+        return $pdf->download('reporte_examenes.pdf');
     }
 }
