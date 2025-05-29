@@ -35,7 +35,7 @@ class DoctorCrudTest extends TestCase
         $this->assertDatabaseHas('doctores', [
             'nombre' => 'Doc',
             'apellido' => 'Tor',
-            'area_doctor' => 'Quiroparacticoooo' 
+            'area_doctor' => 'Quiroparacticoooo'
         ]);
 
         $this->assertDatabaseHas('users', [
@@ -104,6 +104,7 @@ class DoctorCrudTest extends TestCase
             'email' => 'doctor.actualizado@gmail.com',
             'password' => 'nueva123',
             'imagen' => UF::fake()->image('new_doctor.jpg'),
+            'area_doctor' => 'Nueva Especialidad',
         ]);
 
         $response->assertStatus(200)
@@ -129,6 +130,7 @@ class DoctorCrudTest extends TestCase
             'Authorization' => $token
         ])->post("/api/doctores/patch/{$doctorId}", [
             'nombre' => 'SoloNombreCambiado',
+            'area_doctor' => 'Especialidad Actualizada', 
         ]);
 
         $response->assertStatus(200)
@@ -168,7 +170,8 @@ class DoctorCrudTest extends TestCase
         $this->assertDatabaseMissing('users', ['email' => 'doctor@gmail.com']);
     }
 
-    function createAdmin() {
+    function createAdmin()
+    {
         $admin = [
             'email' => 'admin@gmail.com',
             'password' => '123456',
@@ -184,33 +187,33 @@ class DoctorCrudTest extends TestCase
         $loginResponse = $this->post('/api/login', $admin);
 
         $loginResponse->assertStatus(200)
-                ->assertJsonStructure([
-                    'message',
-                    'token',
-                    'user' => [
-                        'type',
-                        'nombre',
-                        'apellido',
-                    ]
-                ]);
+            ->assertJsonStructure([
+                'message',
+                'token',
+                'user' => [
+                    'type',
+                    'nombre',
+                    'apellido',
+                ]
+            ]);
 
         $token = $loginResponse->json('token');
         return "Bearer " . $token;
     }
 
-    function createDoctor($authToken){
+    function createDoctor($authToken)
+    {
         $response = $this->withHeaders([
             'Authorization' => $authToken
-            ])->post('/api/doctores', [
+        ])->post('/api/doctores', [
             'nombre' => 'Doc',
             'apellido' => 'Tor',
             'email' => 'doctor@gmail.com',
             'password' => '123456',
             'password_confirmation' => '123456',
             'imagen' => UF::fake()->image('doctor.jpg'),
-            'area_doctor' => 'Quiroparactico',
+            'area_doctor' => 'Quiroparacticoooo',
         ]);
-
         return $response;
     }
 }

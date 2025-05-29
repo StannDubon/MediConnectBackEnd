@@ -22,9 +22,9 @@ Route::get('/user', [authController::class, 'user'])->middleware('auth:sanctum')
 /* ------ DOCTORES ------ */
 Route::get('/doctores', [doctorController::class, 'index']);
 Route::get('/doctores/{id}', [doctorController::class, 'show']);
-Route::delete('/doctores/{id}', [doctorController::class, 'destroy'])->middleware(['auth:sanctum', 'abilities:server-admin,server-doctor']);
+Route::delete('/doctores/{id}', [doctorController::class, 'destroy']);
 Route::post('/doctores', [doctorController::class, 'store'])->middleware(['auth:sanctum', 'abilities:server-admin']);
-Route::post('/doctores/update/{id}', [doctorController::class, 'update'])->middleware(['auth:sanctum', 'abilities:server-admin,server-doctor']);
+Route::post('/doctores/update/{id}', [doctorController::class, 'update'])->middleware('auth:sanctum');
 Route::post('/doctores/patch/{id}', [doctorController::class, 'updatePartial'])->middleware(['auth:sanctum', 'abilities:server-admin,server-doctor']);
 
 /* ------ EXAMENES  ------ */

@@ -15,7 +15,8 @@ use Illuminate\Support\Str;
 
 class doctorController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $doctores = Doctor::with(['user:id,email,doctor_id'])->get();
 
         if ($doctores->isEmpty()) {
@@ -32,6 +33,7 @@ class doctorController extends Controller
                 'apellido' => $doctor->apellido,
                 'imagen' => $doctor->imagen,
                 'email' => $doctor->user->email ?? null,
+                'area_doctor' => $doctor->area_doctor,
             ];
         });
 
@@ -73,6 +75,7 @@ class doctorController extends Controller
             'apellido' => 'required|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required',
+            'area_doctor' => 'required|max:255',
             'imagen' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
 
@@ -86,6 +89,7 @@ class doctorController extends Controller
             'name' => $validated['nombre'] . " " . $validated['apellido'],
             'email' => $validated['email'],
             'password' => $validated['password'],
+            'area_doctor' => $validated['area_doctor'],
             'type' => 'doctor',
         ];
         unset($validated['email']);
@@ -129,13 +133,13 @@ class doctorController extends Controller
         ], 200);
     }
 
-    public function update(Request $request, $id): JsonResponse{
+    public function update(Request $request, $id): JsonResponse
+    {
         $doctor = Doctor::with(['user:id,email,doctor_id'])->find($id);
 
         if (!$doctor) {
             return response()->json([
                 'message' => 'Doctor no encontrado',
-                'status' => 404,
             ], 404);
         }
 
@@ -144,7 +148,8 @@ class doctorController extends Controller
             'apellido' => 'required|max:255',
             'email' => 'required|email|unique:users,email,' . $doctor->user->id,
             'password' => 'required',
-            'imagen' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+            'imagen' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'area_doctor' => 'required|max:255'
         ]);
 
         $image = $request->file('imagen');
@@ -156,10 +161,10 @@ class doctorController extends Controller
         $doctor->nombre = $request->nombre;
         $doctor->apellido = $request->apellido;
         $doctor->imagen = $filename;
+        $doctor->area_doctor = $request->area_doctor;
 
         $doctor->user->email = $request->email;
-        $doctor->user->password = $request->password;
-
+        $doctor->user->password = $request->password; 
         $doctor->user->save();
         $doctor->save();
 
@@ -171,12 +176,14 @@ class doctorController extends Controller
                 'apellido' => $doctor->apellido,
                 'imagen' => $doctor->imagen,
                 'email' => $doctor->user->email ?? null,
-            ],
-            'status' => 200,
-        ], 200);
+                'area_doctor' => $doctor->area_doctor
+            ]
+        ]);
     }
 
-    public function updatePartial(Request $request, $id): JsonResponse{
+
+    public function updatePartial(Request $request, $id): JsonResponse
+    {
         $doctor = Doctor::with(['user:id,email,doctor_id'])->find($id);
 
         if (!$doctor) {
@@ -198,16 +205,17 @@ class doctorController extends Controller
             'apellido' => 'max:255',
             'email' => 'email|unique:users,email,' . $doctor->user->id,
             'password' => 'min:2',
-            'imagen' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+            'imagen' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'area_doctor' => 'max:255'
         ]);
 
-        if($request->has('nombre')){
+        if ($request->has('nombre')) {
             $doctor->nombre = $request->nombre;
         }
-        if($request->has('apellido')){
+        if ($request->has('apellido')) {
             $doctor->apellido = $request->apellido;
         }
-        if($request->has('imagen')){
+        if ($request->has('imagen')) {
             $image = $request->file('imagen');
             $filename = Str::random(20) . '.' . $image->getClientOriginalExtension();
             $path = $image->storeAs('images', $filename, 'public');
@@ -215,10 +223,10 @@ class doctorController extends Controller
             $doctor->imagen = $filename;
         }
 
-        if($request->has('email')){
+        if ($request->has('email')) {
             $doctor->user->email = $request->email;
         }
-        if($request->has('password')){
+        if ($request->has('password')) {
             $doctor->user->password = $request->password;
         }
 
@@ -233,6 +241,7 @@ class doctorController extends Controller
                 'apellido' => $doctor->apellido,
                 'imagen' => $doctor->imagen,
                 'email' => $doctor->user->email ?? null,
+                'area_doctor' => $doctor->area_doctor
             ],
             'status' => 200,
         ], 200);

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nombre');
             $table->string('apellido');
+            $table->string('area_doctor');
             $table->integer('clinica_diaria');
             $table->string('imagen');
             $table->timestamps();
